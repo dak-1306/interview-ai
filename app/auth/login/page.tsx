@@ -1,47 +1,58 @@
+"use client";
+
+import { loginAction } from "@/app/actions/auth";
+import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 export default function LoginPage() {
+  const [state, action, pending] = useActionState(loginAction, undefined);
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
-      <h1 className="text-4xl font-bold mb-4">Login to Interview AI</h1>
+      <h1 className="text-4xl font-bold mb-4 text-violet-600 dark:text-violet-400">
+        Log in to Interview AI
+      </h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-        Please enter your credentials to access your account and start
-        practicing.
+        Sign in to access your personalized interview practice and track your
+        progress.
       </p>
-      <form className="w-full max-w-sm">
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-            htmlFor="username"
-          >
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400 border border-gray-300 dark:border-gray-600 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your username"
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400 border border-gray-300 dark:border-gray-600 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors duration-30<PASSWORD>"
+      <Card className="w-full max-w-md p-6">
+        <form
+          className="w-full max-w-md space-y-4 flex flex-col "
+          action={action}
         >
-          Login
-        </button>
-      </form>
+          <div className="flex flex-col items-start justify-start">
+            <label htmlFor="email">Email</label>
+            <Input id="email" name="email" placeholder="Email" />
+          </div>
+          {state?.errors?.email && (
+            <p className="text-left text-red-500">{state.errors.email}</p>
+          )}
+
+          <div className="flex flex-col items-start justify-start">
+            <label htmlFor="password">Password</label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+            />
+          </div>
+          {state?.errors?.password && (
+            <div className="text-left text-red-500 bg-white dark:bg-gray-800 p-4 rounded">
+              <p>Password must:</p>
+              <ul className="list-disc list-inside">
+                {state.errors.password.map((error) => (
+                  <li key={error}>- {error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <Button variant="default" size="lg" disabled={pending} type="submit">
+            Log In
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 }

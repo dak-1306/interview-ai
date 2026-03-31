@@ -1,20 +1,21 @@
 "use server";
 
-import { registerUser, loginUser } from "@/app/lib/auth";
-import { FormState, SignupFormSchema } from "@/app/lib/definitions";
-import { createSession } from "@/app/lib/session";
+import { registerUser, loginUser, getCurrentUser } from "@/app/lib/auth";
+import {
+  FormState,
+  SignupFormSchema,
+  LoginFormSchema,
+} from "@/app/lib/definitions";
+import { createSession, getSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
 export async function registerAction(state: FormState, formData: FormData) {
-  console.log("Register action called with state:", state);
-  console.log("Form data entries:", Array.from(formData.entries()));
   // Validate form fields
   const validatedFields = SignupFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
   });
-  console.log("Validated fields:", validatedFields);
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -33,13 +34,41 @@ export async function registerAction(state: FormState, formData: FormData) {
   redirect("/dashboard");
 }
 
-export async function loginAction(formData: FormData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
+export async function loginAction(state: FormState, formData: FormData) {
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
 
-  const user = await loginUser({ email, password });
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const user = await loginUser({
+    email: validatedFields.data.email,
+    password: validatedFields.data.password,
+  });
+  console.log("User login attempt:", { email: validatedFields.data.email });
   if (!user) throw new Error("Invalid credentials");
 
   await createSession(user._id.toString());
   redirect("/dashboard");
+}
+
+export async function checkAuth() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/auth/login");
+  }
+  return session;
+}
+
+export async function getCurrentUserAction(userId: string) {
+  const user = await getCurrentUser(userId);
+  if (!user) {
+    redirect("/auth/login");
+  }
+  return user;
 }

@@ -13,8 +13,6 @@ export async function registerUser({
 }) {
   await connectDB();
 
-  console.log("Data registerUser received:", { email, password, name });
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
@@ -22,7 +20,6 @@ export async function registerUser({
     password: hashedPassword,
     name,
   });
-  console.log("User created:", user);
   return user;
 }
 
@@ -40,6 +37,15 @@ export async function loginUser({
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return null;
+
+  return user;
+}
+
+export async function getCurrentUser(userId: string) {
+  await connectDB();
+
+  const user = await User.findById(userId);
+  if (!user) return null;
 
   return user;
 }

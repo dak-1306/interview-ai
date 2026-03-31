@@ -12,7 +12,11 @@ export default function Header() {
           Interview AI
         </h1>
       </Link>
-      {pathname !== "/" ? (
+      {pathname === "/auth/login" || pathname === "/auth/register" ? (
+        <></>
+      ) : pathname === "/dashboard" ||
+        pathname === "/profile" ||
+        pathname === "/interview/start" ? (
         <div className="flex items-center space-x-4">
           <Link
             href="/dashboard"

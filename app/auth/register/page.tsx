@@ -2,46 +2,65 @@
 
 import { registerAction } from "@/app/actions/auth";
 import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(registerAction, undefined);
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
-      <h1 className="text-4xl font-bold mb-4">Register for Interview AI</h1>
+      <h1 className="text-4xl font-bold mb-4 text-violet-600 dark:text-violet-400">
+        Register for Interview AI
+      </h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
         Create an account to access personalized interview practice and track
         your progress.
       </p>
-      <form action={action}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input id="name" name="name" placeholder="Name" />
-        </div>
-        {state?.errors?.name && <p>{state.errors.name}</p>}
-
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" name="email" placeholder="Email" />
-        </div>
-        {state?.errors?.email && <p>{state.errors.email}</p>}
-
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" />
-        </div>
-        {state?.errors?.password && (
-          <div>
-            <p>Password must:</p>
-            <ul>
-              {state.errors.password.map((error) => (
-                <li key={error}>- {error}</li>
-              ))}
-            </ul>
+      <Card className="w-full max-w-md p-6">
+        <form
+          className="w-full max-w-md space-y-4 flex flex-col "
+          action={action}
+        >
+          <div className="flex flex-col items-start justify-start">
+            <label htmlFor="name">Name</label>
+            <Input id="name" name="name" placeholder="Name" />
           </div>
-        )}
-        <button disabled={pending} type="submit">
-          Sign Up
-        </button>
-      </form>
+          {state?.errors?.name && (
+            <p className="text-left text-red-500">{state.errors.name}</p>
+          )}
+
+          <div className="flex flex-col items-start justify-start">
+            <label htmlFor="email">Email</label>
+            <Input id="email" name="email" placeholder="Email" />
+          </div>
+          {state?.errors?.email && (
+            <p className="text-left text-red-500">{state.errors.email}</p>
+          )}
+
+          <div className="flex flex-col items-start justify-start">
+            <label htmlFor="password">Password</label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+            />
+          </div>
+          {state?.errors?.password && (
+            <div className="text-left text-red-500 bg-white dark:bg-gray-800 p-4 rounded">
+              <p>Password must:</p>
+              <ul className="list-disc list-inside">
+                {state.errors.password.map((error) => (
+                  <li key={error}>- {error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <Button variant="default" size="lg" disabled={pending} type="submit">
+            Sign Up
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 }

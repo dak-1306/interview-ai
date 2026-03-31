@@ -1,20 +1,26 @@
-export default function ProfilePage() {
+import { CardHeader, CardTitle, Card, CardContent } from "@/components/ui/card";
+import { getCurrentUserAction } from "@/app/actions/auth";
+import { checkAuth } from "@/app/actions/auth";
+export default async function ProfilePage() {
+  const session = await checkAuth();
+  const userId = String(session.userId);
+  const user = await getCurrentUserAction(userId);
+
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
-      <h1 className="text-4xl font-bold mb-4 text-violet-600 dark:text-violet-400">
-        Your Profile
-      </h1>
-      <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-        Manage your account settings, update your information, and view your
-        interview practice history.
-      </p>
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <p>Họ tên: John Doe</p>
-        <p>Email: abc@gmail.com </p>
-        <p>Ngày sinh: 01/01/1990</p>
-        <p>Giới tính: Nam</p>
-        <p>Địa chỉ: 123 Main St, Anytown, USA</p>
-      </div>
-    </div>
+    <Card className="max-w-md mx-auto mt-10">
+      <CardHeader>
+        <CardTitle>Profile Information</CardTitle>
+      </CardHeader>
+      {user ? (
+        <CardContent>
+          <p>Họ tên: {user.name}</p>
+          <p>Email: {user.email}</p>
+        </CardContent>
+      ) : (
+        <CardContent>
+          <p>Không thể tải thông tin người dùng.</p>
+        </CardContent>
+      )}
+    </Card>
   );
 }
