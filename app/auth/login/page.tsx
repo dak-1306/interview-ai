@@ -1,6 +1,6 @@
 export default function LoginPage() {
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center mt-16">
+    <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
       <h1 className="text-4xl font-bold mb-4">Login to Interview AI</h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
         Please enter your credentials to access your account and start

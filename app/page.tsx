@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
@@ -7,11 +8,10 @@ export default function Home() {
         An AI-powered interview preparation tool that helps you practice and
         improve your interview skills.
       </p>
-      <Link
-        href="/dashboard"
-        className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors duration-300"
-      >
-        Get Started
+      <Link href="/dashboard">
+        <Button variant="default" size="lg">
+          Get Started
+        </Button>
       </Link>
     </div>
   );
