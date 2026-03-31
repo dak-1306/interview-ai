@@ -1,6 +1,9 @@
+"use client";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 export default function Header() {
-  const isLogin = true;
+  const pathname = usePathname();
 
   return (
     <header className="w-full h-16 flex justify-between items-center px-16 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 z-10">
@@ -9,7 +12,7 @@ export default function Header() {
           Interview AI
         </h1>
       </Link>
-      {isLogin && (
+      {pathname !== "/" ? (
         <div className="flex items-center space-x-4">
           <Link
             href="/dashboard"
@@ -23,25 +26,29 @@ export default function Header() {
           >
             Profile
           </Link>
-          <Link
-            href="/interview/start"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
-          >
-            Start Interview
+          <Link href="/interview/start">
+            <Button variant="link" size="sm">
+              Start Interview
+            </Button>
           </Link>
         </div>
-      )}
-      {!isLogin && (
+      ) : (
         <div className="flex items-center space-x-4">
           <Link href="/auth/login">
-            <button className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-300">
+            <Button
+              variant="outline"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-300"
+            >
               Login
-            </button>
+            </Button>
           </Link>
           <Link href="/auth/register">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+            <Button
+              variant="default"
+              className="bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-300"
+            >
               Register
-            </button>
+            </Button>
           </Link>
         </div>
       )}
