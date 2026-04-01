@@ -1,27 +1,37 @@
+import {
+  Item,
+  ItemTitle,
+  ItemDescription,
+  ItemGroup,
+  ItemSeparator,
+} from "@/components/ui/item";
+import { Card } from "@/components/ui/card";
+const mockHistory = [
+  { id: "s1", title: "Session — Arrays", desc: "2026-03-20 — Score: 78%" },
+  { id: "s2", title: "Session — GraphQL", desc: "2026-03-10 — Score: 85%" },
+  {
+    id: "s3",
+    title: "Session — System Design",
+    desc: "2026-02-28 — Score: 92%",
+  },
+];
 export default function HistoryPage() {
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
-      <h1 className="text-4xl font-bold mb-4">Your Interview History</h1>
-      <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-        This is where you will find a history of your past interview practice
-        sessions, including the questions you practiced and the feedback you
-        received.
-      </p>
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <p>Welcome to your interview history page!</p>
-        <p>
-          Session 1: 01/01/2024 - Practiced Data Structures - Feedback: Good
-          understanding of arrays and linked lists.
-        </p>
-        <p>
-          Session 2: 01/15/2024 - Practiced Algorithms - Feedback: Need to
-          improve on sorting algorithms.
-        </p>
-        <p>
-          Session 3: 02/01/2024 - Practiced System Design - Feedback: Strong
-          design skills, but work on scalability.
-        </p>
-      </div>
+    <div className="w-full max-w-2xl">
+      <h2 className="text-xl font-semibold mb-3">Recent Sessions</h2>
+      <Card>
+        <ItemGroup>
+          {mockHistory.map((h, idx) => (
+            <div key={h.id}>
+              <Item className="p-4">
+                <ItemTitle>{h.title}</ItemTitle>
+                <ItemDescription>{h.desc}</ItemDescription>
+              </Item>
+              {idx < mockHistory.length - 1 && <ItemSeparator />}
+            </div>
+          ))}
+        </ItemGroup>
+      </Card>
     </div>
   );
 }

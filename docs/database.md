@@ -29,22 +29,10 @@ Fields:
 - position
 - level
 - score
+- correct
+- percent
 - startedAt
 - finishedAt
-- createdAt
-
----
-
-### Messages
-
-Chat messages between AI and user.
-
-Fields:
-
-- \_id
-- interviewId
-- role (ai | user)
-- content
 - createdAt
 
 ---
@@ -57,6 +45,8 @@ Fields:
 
 - \_id
 - interviewId
+- type
+- options
 - question
 - answer
 - feedback

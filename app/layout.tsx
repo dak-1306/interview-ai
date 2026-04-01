@@ -49,7 +49,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
-        <main className="bg-gray-100 dark:bg-gray-900 flex-1 overflow-y-auto pt-16">
+        <main className="bg-gray-100 dark:bg-gray-900 flex-1 overflow-y-auto pt-16 flex flex-col items-center justify-center">
           {children}
         </main>
         <Footer />

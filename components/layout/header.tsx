@@ -16,7 +16,10 @@ export default function Header() {
         <></>
       ) : pathname === "/dashboard" ||
         pathname === "/profile" ||
-        pathname === "/interview/start" ? (
+        pathname === "/interview/start" ||
+        pathname === "/interview/result" ||
+        pathname === "/history" ||
+        pathname === "/interview/practice" ? (
         <div className="flex items-center space-x-4">
           <Link
             href="/dashboard"

@@ -1,0 +1,588 @@
+export type question = {
+  id: string;
+  type: "mcq" | "text";
+  level?: "intern" | "fresher" | "junior" | "senior";
+  position?: "backend" | "frontend" | "fullstack" | "devops";
+  question: string;
+  options?: string[];
+  answer?: string;
+  score?: number;
+};
+
+export type questionResult = {
+  questionId: string;
+  answer: string;
+  score: number;
+};
+
+// Explicit list: 3 questions per position x level (keep original simple form)
+export const sampleQuestions: question[] = [
+  // backend - intern
+  {
+    id: "backend-intern-1",
+    type: "mcq",
+    level: "intern",
+    position: "backend",
+    question: "Which HTTP method is typically used to retrieve data?",
+    options: ["GET", "POST", "PUT", "DELETE"],
+    answer: "GET",
+    score: 1,
+  },
+  {
+    id: "backend-intern-2",
+    type: "mcq",
+    level: "intern",
+    position: "backend",
+    question: "Which database is relational (SQL)?",
+    options: ["MongoDB", "MySQL", "Redis", "Cassandra"],
+    answer: "MySQL",
+    score: 1,
+  },
+  {
+    id: "backend-intern-3",
+    type: "text",
+    level: "intern",
+    position: "backend",
+    question: "Briefly explain what an API endpoint is.",
+    answer: "",
+    score: 1,
+  },
+
+  // backend - fresher
+  {
+    id: "backend-fresher-1",
+    type: "mcq",
+    level: "fresher",
+    position: "backend",
+    question: "What does SQL stand for?",
+    options: [
+      "Structured Query Language",
+      "Simple Query Language",
+      "Sequential Query Language",
+      "Standard Query List",
+    ],
+    answer: "Structured Query Language",
+    score: 1,
+  },
+  {
+    id: "backend-fresher-2",
+    type: "mcq",
+    level: "fresher",
+    position: "backend",
+    question: "Which status code means success?",
+    options: ["200", "404", "500", "301"],
+    answer: "200",
+    score: 1,
+  },
+  {
+    id: "backend-fresher-3",
+    type: "text",
+    level: "fresher",
+    position: "backend",
+    question: "Describe what a RESTful API is in one sentence.",
+    answer: "",
+    score: 1,
+  },
+
+  // backend - junior
+  {
+    id: "backend-junior-1",
+    type: "mcq",
+    level: "junior",
+    position: "backend",
+    question: "Which technique helps scale read-heavy databases?",
+    options: ["Replication", "Sharding", "Indexing", "Caching"],
+    answer: "Replication",
+    score: 2,
+  },
+  {
+    id: "backend-junior-2",
+    type: "mcq",
+    level: "junior",
+    position: "backend",
+    question: "Which of these is a message broker?",
+    options: ["RabbitMQ", "MySQL", "Redis (not as broker)", "MongoDB"],
+    answer: "RabbitMQ",
+    score: 2,
+  },
+  {
+    id: "backend-junior-3",
+    type: "text",
+    level: "junior",
+    position: "backend",
+    question: "Explain the difference between horizontal and vertical scaling.",
+    answer: "",
+    score: 2,
+  },
+
+  // backend - senior
+  {
+    id: "backend-senior-1",
+    type: "mcq",
+    level: "senior",
+    position: "backend",
+    question: "Which isolation level prevents dirty reads?",
+    options: ["Read Committed", "Read Uncommitted", "Snapshot", "Serializable"],
+    answer: "Read Committed",
+    score: 3,
+  },
+  {
+    id: "backend-senior-2",
+    type: "mcq",
+    level: "senior",
+    position: "backend",
+    question: "Which pattern helps to decompose a monolith?",
+    options: ["Microservices", "Singleton", "Factory", "Adapter"],
+    answer: "Microservices",
+    score: 3,
+  },
+  {
+    id: "backend-senior-3",
+    type: "text",
+    level: "senior",
+    position: "backend",
+    question:
+      "Describe strategies for handling schema migrations in production.",
+    answer: "",
+    score: 3,
+  },
+
+  // frontend - intern
+  {
+    id: "frontend-intern-1",
+    type: "mcq",
+    level: "intern",
+    position: "frontend",
+    question: "Which HTML tag is used for paragraphs?",
+    options: ["<p>", "<div>", "<span>", "<section>"],
+    answer: "<p>",
+    score: 1,
+  },
+  {
+    id: "frontend-intern-2",
+    type: "mcq",
+    level: "intern",
+    position: "frontend",
+    question: "What does CSS stand for?",
+    options: [
+      "Cascading Style Sheets",
+      "Computer Style Sheets",
+      "Creative Styling Sheets",
+      "Colorful Style Syntax",
+    ],
+    answer: "Cascading Style Sheets",
+    score: 1,
+  },
+  {
+    id: "frontend-intern-3",
+    type: "text",
+    level: "intern",
+    position: "frontend",
+    question: "What is the purpose of the <head> element in HTML?",
+    answer: "",
+    score: 1,
+  },
+
+  // frontend - fresher
+  {
+    id: "frontend-fresher-1",
+    type: "mcq",
+    level: "fresher",
+    position: "frontend",
+    question: "Which property centers text in CSS?",
+    options: [
+      "text-align: center",
+      "align-items: center",
+      "justify-content: center",
+      "center-text: true",
+    ],
+    answer: "text-align: center",
+    score: 1,
+  },
+  {
+    id: "frontend-fresher-2",
+    type: "mcq",
+    level: "fresher",
+    position: "frontend",
+    question: "Which attribute sets an image source in HTML?",
+    options: ["src", "href", "alt", "data-src"],
+    answer: "src",
+    score: 1,
+  },
+  {
+    id: "frontend-fresher-3",
+    type: "text",
+    level: "fresher",
+    position: "frontend",
+    question: "Explain what responsive design means.",
+    answer: "",
+    score: 1,
+  },
+
+  // frontend - junior
+  {
+    id: "frontend-junior-1",
+    type: "mcq",
+    level: "junior",
+    position: "frontend",
+    question: "What is the virtual DOM?",
+    options: [
+      "A lightweight copy of the real DOM",
+      "A server-side DOM",
+      "A CSS abstraction",
+      "A database for DOM nodes",
+    ],
+    answer: "A lightweight copy of the real DOM",
+    score: 2,
+  },
+  {
+    id: "frontend-junior-2",
+    type: "mcq",
+    level: "junior",
+    position: "frontend",
+    question: "Which tool is commonly used for bundling JS?",
+    options: ["Webpack", "Postgres", "Nginx", "Docker"],
+    answer: "Webpack",
+    score: 2,
+  },
+  {
+    id: "frontend-junior-3",
+    type: "text",
+    level: "junior",
+    position: "frontend",
+    question: "Describe when you would use CSS Grid vs Flexbox.",
+    answer: "",
+    score: 2,
+  },
+
+  // frontend - senior
+  {
+    id: "frontend-senior-1",
+    type: "mcq",
+    level: "senior",
+    position: "frontend",
+    question: "Which pattern helps avoid prop drilling in React?",
+    options: [
+      "Context API",
+      "Lifting State Up",
+      "Redux only",
+      "Direct DOM access",
+    ],
+    answer: "Context API",
+    score: 3,
+  },
+  {
+    id: "frontend-senior-2",
+    type: "mcq",
+    level: "senior",
+    position: "frontend",
+    question: "What is code-splitting used for?",
+    options: [
+      "Reduce initial bundle size",
+      "Increase CSS specificity",
+      "Improve SEO",
+      "Encrypt assets",
+    ],
+    answer: "Reduce initial bundle size",
+    score: 3,
+  },
+  {
+    id: "frontend-senior-3",
+    type: "text",
+    level: "senior",
+    position: "frontend",
+    question: "Explain techniques to improve web app performance.",
+    answer: "",
+    score: 3,
+  },
+
+  // fullstack - intern
+  {
+    id: "fullstack-intern-1",
+    type: "mcq",
+    level: "intern",
+    position: "fullstack",
+    question: "Which layer typically handles business logic?",
+    options: ["Backend", "Frontend", "Database", "Proxy"],
+    answer: "Backend",
+    score: 1,
+  },
+  {
+    id: "fullstack-intern-2",
+    type: "mcq",
+    level: "intern",
+    position: "fullstack",
+    question: "What does REST stand for?",
+    options: [
+      "Representational State Transfer",
+      "Remote State Transfer",
+      "Representational Server Transfer",
+      "Reserved State Transport",
+    ],
+    answer: "Representational State Transfer",
+    score: 1,
+  },
+  {
+    id: "fullstack-intern-3",
+    type: "text",
+    level: "intern",
+    position: "fullstack",
+    question: "Describe the role of an API in a web application.",
+    answer: "",
+    score: 1,
+  },
+
+  // fullstack - fresher
+  {
+    id: "fullstack-fresher-1",
+    type: "mcq",
+    level: "fresher",
+    position: "fullstack",
+    question: "Which database would you choose for relational data?",
+    options: ["Postgres", "MongoDB", "Redis", "Elasticsearch"],
+    answer: "Postgres",
+    score: 1,
+  },
+  {
+    id: "fullstack-fresher-2",
+    type: "mcq",
+    level: "fresher",
+    position: "fullstack",
+    question: "Which HTTP status indicates 'Not Found'?",
+    options: ["404", "200", "500", "403"],
+    answer: "404",
+    score: 1,
+  },
+  {
+    id: "fullstack-fresher-3",
+    type: "text",
+    level: "fresher",
+    position: "fullstack",
+    question: "Explain how the browser requests a webpage (high level).",
+    answer: "",
+    score: 1,
+  },
+
+  // fullstack - junior
+  {
+    id: "fullstack-junior-1",
+    type: "mcq",
+    level: "junior",
+    position: "fullstack",
+    question: "What is CORS used for?",
+    options: [
+      "Cross-origin resource sharing",
+      "Cookie operation routing system",
+      "Client-only routing service",
+      "Cache origin response system",
+    ],
+    answer: "Cross-origin resource sharing",
+    score: 2,
+  },
+  {
+    id: "fullstack-junior-2",
+    type: "mcq",
+    level: "junior",
+    position: "fullstack",
+    question: "Which tool helps automate builds and tests?",
+    options: ["CI tools (e.g., GitHub Actions)", "Dockerfile", "Nginx", "Sass"],
+    answer: "CI tools (e.g., GitHub Actions)",
+    score: 2,
+  },
+  {
+    id: "fullstack-junior-3",
+    type: "text",
+    level: "junior",
+    position: "fullstack",
+    question:
+      "Describe how you would debug a failing API call from the frontend.",
+    answer: "",
+    score: 2,
+  },
+
+  // fullstack - senior
+  {
+    id: "fullstack-senior-1",
+    type: "mcq",
+    level: "senior",
+    position: "fullstack",
+    question: "Which approach helps horizontally scale a web application?",
+    options: [
+      "Load balancing",
+      "Single-threading",
+      "Monolithic-only",
+      "Inline scripts",
+    ],
+    answer: "Load balancing",
+    score: 3,
+  },
+  {
+    id: "fullstack-senior-2",
+    type: "mcq",
+    level: "senior",
+    position: "fullstack",
+    question: "What is eventual consistency?",
+    options: [
+      "Data will become consistent over time",
+      "Immediate consistency always",
+      "Temporary inconsistency is impossible",
+      "Consistency enforced by DB only",
+    ],
+    answer: "Data will become consistent over time",
+    score: 3,
+  },
+  {
+    id: "fullstack-senior-3",
+    type: "text",
+    level: "senior",
+    position: "fullstack",
+    question:
+      "Describe a migration strategy for a critical production database.",
+    answer: "",
+    score: 3,
+  },
+
+  // devops - intern
+  {
+    id: "devops-intern-1",
+    type: "mcq",
+    level: "intern",
+    position: "devops",
+    question: "Which tool is commonly used for container builds?",
+    options: ["Docker", "Kubernetes", "Ansible", "Terraform"],
+    answer: "Docker",
+    score: 1,
+  },
+  {
+    id: "devops-intern-2",
+    type: "mcq",
+    level: "intern",
+    position: "devops",
+    question: "What does CI stand for?",
+    options: [
+      "Continuous Integration",
+      "Continuous Inspection",
+      "Container Integration",
+      "Continuous Infrastructure",
+    ],
+    answer: "Continuous Integration",
+    score: 1,
+  },
+  {
+    id: "devops-intern-3",
+    type: "text",
+    level: "intern",
+    position: "devops",
+    question: "Explain what a Docker image is.",
+    answer: "",
+    score: 1,
+  },
+
+  // devops - fresher
+  {
+    id: "devops-fresher-1",
+    type: "mcq",
+    level: "fresher",
+    position: "devops",
+    question: "Which system is used for orchestration of containers?",
+    options: ["Kubernetes", "Docker Compose", "Git", "Vim"],
+    answer: "Kubernetes",
+    score: 1,
+  },
+  {
+    id: "devops-fresher-2",
+    type: "mcq",
+    level: "fresher",
+    position: "devops",
+    question: "Which file often defines CI steps?",
+    options: [
+      ".github/workflows/*.yml",
+      "package.json",
+      "Dockerfile",
+      "README.md",
+    ],
+    answer: ".github/workflows/*.yml",
+    score: 1,
+  },
+  {
+    id: "devops-fresher-3",
+    type: "text",
+    level: "fresher",
+    position: "devops",
+    question: "Describe what infrastructure as code means.",
+    answer: "",
+    score: 1,
+  },
+
+  // devops - junior
+  {
+    id: "devops-junior-1",
+    type: "mcq",
+    level: "junior",
+    position: "devops",
+    question: "Which monitoring tool is commonly used?",
+    options: ["Prometheus", "Postgres", "Redis", "Sass"],
+    answer: "Prometheus",
+    score: 2,
+  },
+  {
+    id: "devops-junior-2",
+    type: "mcq",
+    level: "junior",
+    position: "devops",
+    question: "What is immutable infrastructure?",
+    options: [
+      "Servers are replaced rather than modified",
+      "Servers are modified in-place",
+      "Containers are not allowed",
+      "Infrastructure cannot be versioned",
+    ],
+    answer: "Servers are replaced rather than modified",
+    score: 2,
+  },
+  {
+    id: "devops-junior-3",
+    type: "text",
+    level: "junior",
+    position: "devops",
+    question: "Explain rollback strategies for deployments.",
+    answer: "",
+    score: 2,
+  },
+
+  // devops - senior
+  {
+    id: "devops-senior-1",
+    type: "mcq",
+    level: "senior",
+    position: "devops",
+    question: "Which tool is used to provision cloud resources declaratively?",
+    options: ["Terraform", "Gulp", "Webpack", "Jest"],
+    answer: "Terraform",
+    score: 3,
+  },
+  {
+    id: "devops-senior-2",
+    type: "mcq",
+    level: "senior",
+    position: "devops",
+    question: "What is canary deployment?",
+    options: [
+      "Deploying to a small subset of users first",
+      "Deploying simultaneously to all users",
+      "Deploying only to staging",
+      "Using only blue-green",
+    ],
+    answer: "Deploying to a small subset of users first",
+    score: 3,
+  },
+  {
+    id: "devops-senior-3",
+    type: "text",
+    level: "senior",
+    position: "devops",
+    question: "Describe how you would secure CI/CD pipelines.",
+    answer: "",
+    score: 3,
+  },
+];
