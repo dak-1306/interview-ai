@@ -43,8 +43,8 @@ export async function startInterview({ position, level, userId }: StartParams) {
         position: s.position,
         options: s.options,
         question: s.question,
-        expectedAnswer: s.answer,
-        expectedScore: s.score ?? 1,
+        expectedAnswer: (s as any).expectedAnswer,
+        expectedScore: (s as any).expectedScore ?? 1,
         score: 0,
       }),
     ),
@@ -77,58 +77,65 @@ export async function answerQuestion({
   answer,
 }: AnswerParams) {
   await connectDB();
-
   const q = await Question.findById(questionId);
   if (!q) throw new Error("Question not found");
-
-  // grading: simple exact-match for mcq, 0 for text (placeholder)
-  let gained = 0;
-  if (q.type === "mcq") {
-    if (
-      q.expectedAnswer &&
-      String(answer).trim() === String(q.expectedAnswer).trim()
-    ) {
-      gained = q.expectedScore || 1;
-    }
-  }
-
+  // Only persist givenAnswer (progress). Final scoring will be computed in finishInterview.
   q.givenAnswer = answer;
-  q.score = gained;
-
   await q.save();
 
-  // recalc interview aggregates
-  const questions = await Question.find({ interviewId });
-  const totalScore = questions.reduce((s, it) => s + (it.score || 0), 0);
-  const maxScore = questions.reduce((s, it) => s + (it.expectedScore || 0), 0);
-  const correct = questions.filter((it) => (it.score || 0) > 0).length;
-  const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
-
-  await Interview.findByIdAndUpdate(interviewId, {
-    score: totalScore,
-    correct,
-    percent,
-  });
-
-  return { questionId, score: gained, totalScore, percent };
+  return { interviewId, questionId };
 }
 
 export async function finishInterview(interviewId: string) {
   await connectDB();
+  const session = await mongoose.startSession();
+  let resultInterview = null;
+  let totalScore = 0;
+  let percent = 0;
+  let correct = 0;
+  try {
+    await session.withTransaction(async () => {
+      const questions = await Question.find({ interviewId }).session(session);
 
-  const questions = await Question.find({ interviewId });
-  const totalScore = questions.reduce((s, it) => s + (it.score || 0), 0);
-  const maxScore = questions.reduce((s, it) => s + (it.expectedScore || 0), 0);
-  const correct = questions.filter((it) => (it.score || 0) > 0).length;
-  const percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+      let maxScore = 0;
+      totalScore = 0;
+      correct = 0;
 
-  const interview = await Interview.findByIdAndUpdate(
-    interviewId,
-    { finishedAt: new Date(), score: totalScore, correct, percent },
-    { new: true },
-  );
+      for (const q of questions) {
+        let gained = 0;
+        if (q.type === "mcq") {
+          if (
+            q.expectedAnswer &&
+            q.givenAnswer &&
+            String(q.givenAnswer).trim() === String(q.expectedAnswer).trim()
+          ) {
+            gained = q.expectedScore || 1;
+          }
+        }
 
-  return { interview, totalScore, percent, correct };
+        if ((q.score || 0) !== gained) {
+          q.score = gained;
+          await q.save({ session });
+        }
+
+        totalScore += gained;
+        maxScore += q.expectedScore || 0;
+        if (gained > 0) correct++;
+      }
+
+      percent = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+
+      resultInterview = await Interview.findByIdAndUpdate(
+        interviewId,
+        { finishedAt: new Date(), score: totalScore, correct, percent },
+        { new: true, session },
+      );
+    });
+  } finally {
+    session.endSession();
+  }
+
+  return { interview: resultInterview, totalScore, percent, correct };
 }
 
 export async function getHistory(userId: string) {

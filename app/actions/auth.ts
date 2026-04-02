@@ -31,9 +31,6 @@ export async function registerAction(state: FormState, formData: FormData) {
     password: validatedFields.data.password,
     name: validatedFields.data.name,
   });
-
-  console.log("User registered:", user);
-
   await createSession(user._id.toString());
   redirect("/dashboard");
 }
@@ -54,7 +51,6 @@ export async function loginAction(state: FormState, formData: FormData) {
     email: validatedFields.data.email,
     password: validatedFields.data.password,
   });
-  console.log("User login attempt:", { email: validatedFields.data.email });
   if (!user) throw new Error("Invalid credentials");
 
   await createSession(user._id.toString());

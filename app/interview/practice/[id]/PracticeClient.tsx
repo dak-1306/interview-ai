@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,25 +12,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-
-type Question = {
-  id: string;
-  type: "mcq" | "text";
-  question: string;
-  options?: string[];
-  answer?: string;
-  score?: number;
-};
-
-type InterviewProp = {
-  id: string;
-  position?: string;
-  level?: string;
-  questions: Question[];
-};
+import type { InterviewClient } from "@/app/lib/types/interview";
 
 type Props = {
-  interview: InterviewProp;
+  interview: InterviewClient;
 };
 
 type Result = {
@@ -44,6 +29,8 @@ export default function PracticeClient({ interview }: Props) {
   const [index, setIndex] = useState(0);
   const [mcqAnswers, setMcqAnswers] = useState<Record<string, string>>({});
   const [textAnswers, setTextAnswers] = useState<Record<string, string>>({});
+  const [savingMap, setSavingMap] = useState<Record<string, boolean>>({});
+  const debounceTimers = useRef<Record<string, number>>({});
   const [openSubmit, setOpenSubmit] = useState(false);
   const [formResult, setFormResult] = useState<Result[] | null>(null);
 
@@ -80,9 +67,43 @@ export default function PracticeClient({ interview }: Props) {
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     setOpenSubmit(false);
-    router.push(`/interview/result`);
+    try {
+      const res = await fetch("/api/interview/finish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interviewId: interview.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Finish failed");
+      const finishedId =
+        data?.result?.interview?._id ||
+        data?.result?.interview?.id ||
+        interview.id;
+      router.push(`/interview/result?interviewId=${finishedId}`);
+    } catch (err) {
+      console.error(err);
+      // on error, show simple alert for now
+      alert("Failed to finish interview. Please try again.");
+    }
+  }
+
+  async function saveAnswer(questionId: string, answer: string) {
+    setSavingMap((s) => ({ ...s, [questionId]: true }));
+    try {
+      const res = await fetch("/api/interview/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interviewId: interview.id, questionId, answer }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Save failed");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingMap((s) => ({ ...s, [questionId]: false }));
+    }
   }
 
   return (
@@ -102,14 +123,16 @@ export default function PracticeClient({ interview }: Props) {
             {current.type === "mcq" && (
               <RadioGroup
                 value={mcqAnswers[current.id] || ""}
-                onValueChange={(v) =>
-                  setMcqAnswers((s) => ({ ...s, [current.id]: v }))
-                }
+                onValueChange={(v) => {
+                  setMcqAnswers((s) => ({ ...s, [current.id]: v }));
+                  // optimistic save
+                  saveAnswer(current.id, v);
+                }}
               >
                 <div className="grid gap-2">
                   {current.options?.map((opt, i) => (
                     <label key={i} className="flex items-center gap-3">
-                      <RadioGroupItem value={String(i)} />
+                      <RadioGroupItem value={opt} />
                       <span>{opt}</span>
                     </label>
                   ))}
@@ -120,17 +143,30 @@ export default function PracticeClient({ interview }: Props) {
             {current.type === "text" && (
               <Textarea
                 value={textAnswers[current.id] || ""}
-                onChange={(e) =>
-                  setTextAnswers((s) => ({
-                    ...s,
-                    [current.id]: e.target.value,
-                  }))
-                }
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setTextAnswers((s) => ({ ...s, [current.id]: val }));
+                  // debounce save
+                  const t = debounceTimers.current[current.id];
+                  if (t) clearTimeout(t);
+
+                  debounceTimers.current[current.id] = window.setTimeout(() => {
+                    saveAnswer(current.id, val);
+                  }, 600);
+                }}
+                onBlur={() => {
+                  const val = textAnswers[current.id] || "";
+                  // ensure final save on blur
+                  saveAnswer(current.id, val);
+                }}
                 placeholder="Type your answer here..."
               />
             )}
 
-            <div className="flex justify-end">
+            <div className="flex items-center justify-end gap-4">
+              {savingMap[current.id] && (
+                <div className="text-sm text-gray-500">Saving...</div>
+              )}
               <Button onClick={handleNext}>Next</Button>
             </div>
           </div>
@@ -152,8 +188,8 @@ export default function PracticeClient({ interview }: Props) {
                 <div className="font-medium">{q.question}</div>
                 <div className="text-muted-foreground">
                   {q.type === "mcq"
-                    ? mcqAnswers[q.id] !== undefined
-                      ? q.options?.[Number(mcqAnswers[q.id])]
+                    ? mcqAnswers[q.id]
+                      ? mcqAnswers[q.id]
                       : "(no answer)"
                     : textAnswers[q.id] || "(no answer)"}
                 </div>

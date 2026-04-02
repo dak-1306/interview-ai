@@ -5,8 +5,9 @@ export type question = {
   position?: "backend" | "frontend" | "fullstack" | "devops";
   question: string;
   options?: string[];
-  answer?: string;
-  score?: number;
+  expectedAnswer?: string;
+  expectedScore?: number;
+  givenAnswer?: string;
 };
 
 export type questionResult = {
@@ -25,8 +26,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which HTTP method is typically used to retrieve data?",
     options: ["GET", "POST", "PUT", "DELETE"],
-    answer: "GET",
-    score: 1,
+    expectedAnswer: "GET",
+    expectedScore: 1,
   },
   {
     id: "backend-intern-2",
@@ -35,8 +36,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which database is relational (SQL)?",
     options: ["MongoDB", "MySQL", "Redis", "Cassandra"],
-    answer: "MySQL",
-    score: 1,
+    expectedAnswer: "MySQL",
+    expectedScore: 1,
   },
   {
     id: "backend-intern-3",
@@ -44,8 +45,8 @@ export const sampleQuestions: question[] = [
     level: "intern",
     position: "backend",
     question: "Briefly explain what an API endpoint is.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // backend - fresher
@@ -61,8 +62,8 @@ export const sampleQuestions: question[] = [
       "Sequential Query Language",
       "Standard Query List",
     ],
-    answer: "Structured Query Language",
-    score: 1,
+    expectedAnswer: "Structured Query Language",
+    expectedScore: 1,
   },
   {
     id: "backend-fresher-2",
@@ -71,8 +72,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which status code means success?",
     options: ["200", "404", "500", "301"],
-    answer: "200",
-    score: 1,
+    expectedAnswer: "200",
+    expectedScore: 1,
   },
   {
     id: "backend-fresher-3",
@@ -80,8 +81,8 @@ export const sampleQuestions: question[] = [
     level: "fresher",
     position: "backend",
     question: "Describe what a RESTful API is in one sentence.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // backend - junior
@@ -92,8 +93,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which technique helps scale read-heavy databases?",
     options: ["Replication", "Sharding", "Indexing", "Caching"],
-    answer: "Replication",
-    score: 2,
+    expectedAnswer: "Replication",
+    expectedScore: 2,
   },
   {
     id: "backend-junior-2",
@@ -102,8 +103,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which of these is a message broker?",
     options: ["RabbitMQ", "MySQL", "Redis (not as broker)", "MongoDB"],
-    answer: "RabbitMQ",
-    score: 2,
+    expectedAnswer: "RabbitMQ",
+    expectedScore: 2,
   },
   {
     id: "backend-junior-3",
@@ -111,8 +112,8 @@ export const sampleQuestions: question[] = [
     level: "junior",
     position: "backend",
     question: "Explain the difference between horizontal and vertical scaling.",
-    answer: "",
-    score: 2,
+    expectedAnswer: "",
+    expectedScore: 2,
   },
 
   // backend - senior
@@ -123,8 +124,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which isolation level prevents dirty reads?",
     options: ["Read Committed", "Read Uncommitted", "Snapshot", "Serializable"],
-    answer: "Read Committed",
-    score: 3,
+    expectedAnswer: "Read Committed",
+    expectedScore: 3,
   },
   {
     id: "backend-senior-2",
@@ -133,8 +134,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question: "Which pattern helps to decompose a monolith?",
     options: ["Microservices", "Singleton", "Factory", "Adapter"],
-    answer: "Microservices",
-    score: 3,
+    expectedAnswer: "Microservices",
+    expectedScore: 3,
   },
   {
     id: "backend-senior-3",
@@ -143,8 +144,8 @@ export const sampleQuestions: question[] = [
     position: "backend",
     question:
       "Describe strategies for handling schema migrations in production.",
-    answer: "",
-    score: 3,
+    expectedAnswer: "",
+    expectedScore: 3,
   },
 
   // frontend - intern
@@ -155,8 +156,8 @@ export const sampleQuestions: question[] = [
     position: "frontend",
     question: "Which HTML tag is used for paragraphs?",
     options: ["<p>", "<div>", "<span>", "<section>"],
-    answer: "<p>",
-    score: 1,
+    expectedAnswer: "<p>",
+    expectedScore: 1,
   },
   {
     id: "frontend-intern-2",
@@ -170,8 +171,8 @@ export const sampleQuestions: question[] = [
       "Creative Styling Sheets",
       "Colorful Style Syntax",
     ],
-    answer: "Cascading Style Sheets",
-    score: 1,
+    expectedAnswer: "Cascading Style Sheets",
+    expectedScore: 1,
   },
   {
     id: "frontend-intern-3",
@@ -179,8 +180,9 @@ export const sampleQuestions: question[] = [
     level: "intern",
     position: "frontend",
     question: "What is the purpose of the <head> element in HTML?",
-    answer: "",
-    score: 1,
+    expectedAnswer:
+      "The <head> element contains meta information about the HTML page, such as its title and links to stylesheets.",
+    expectedScore: 1,
   },
 
   // frontend - fresher
@@ -196,8 +198,8 @@ export const sampleQuestions: question[] = [
       "justify-content: center",
       "center-text: true",
     ],
-    answer: "text-align: center",
-    score: 1,
+    expectedAnswer: "text-align: center",
+    expectedScore: 1,
   },
   {
     id: "frontend-fresher-2",
@@ -206,8 +208,8 @@ export const sampleQuestions: question[] = [
     position: "frontend",
     question: "Which attribute sets an image source in HTML?",
     options: ["src", "href", "alt", "data-src"],
-    answer: "src",
-    score: 1,
+    expectedAnswer: "src",
+    expectedScore: 1,
   },
   {
     id: "frontend-fresher-3",
@@ -215,8 +217,8 @@ export const sampleQuestions: question[] = [
     level: "fresher",
     position: "frontend",
     question: "Explain what responsive design means.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // frontend - junior
@@ -232,8 +234,8 @@ export const sampleQuestions: question[] = [
       "A CSS abstraction",
       "A database for DOM nodes",
     ],
-    answer: "A lightweight copy of the real DOM",
-    score: 2,
+    expectedAnswer: "A lightweight copy of the real DOM",
+    expectedScore: 2,
   },
   {
     id: "frontend-junior-2",
@@ -242,8 +244,8 @@ export const sampleQuestions: question[] = [
     position: "frontend",
     question: "Which tool is commonly used for bundling JS?",
     options: ["Webpack", "Postgres", "Nginx", "Docker"],
-    answer: "Webpack",
-    score: 2,
+    expectedAnswer: "Webpack",
+    expectedScore: 2,
   },
   {
     id: "frontend-junior-3",
@@ -251,8 +253,8 @@ export const sampleQuestions: question[] = [
     level: "junior",
     position: "frontend",
     question: "Describe when you would use CSS Grid vs Flexbox.",
-    answer: "",
-    score: 2,
+    expectedAnswer: "",
+    expectedScore: 2,
   },
 
   // frontend - senior
@@ -268,8 +270,8 @@ export const sampleQuestions: question[] = [
       "Redux only",
       "Direct DOM access",
     ],
-    answer: "Context API",
-    score: 3,
+    expectedAnswer: "Context API",
+    expectedScore: 3,
   },
   {
     id: "frontend-senior-2",
@@ -283,8 +285,8 @@ export const sampleQuestions: question[] = [
       "Improve SEO",
       "Encrypt assets",
     ],
-    answer: "Reduce initial bundle size",
-    score: 3,
+    expectedAnswer: "Reduce initial bundle size",
+    expectedScore: 3,
   },
   {
     id: "frontend-senior-3",
@@ -292,8 +294,8 @@ export const sampleQuestions: question[] = [
     level: "senior",
     position: "frontend",
     question: "Explain techniques to improve web app performance.",
-    answer: "",
-    score: 3,
+    expectedAnswer: "",
+    expectedScore: 3,
   },
 
   // fullstack - intern
@@ -304,8 +306,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question: "Which layer typically handles business logic?",
     options: ["Backend", "Frontend", "Database", "Proxy"],
-    answer: "Backend",
-    score: 1,
+    expectedAnswer: "Backend",
+    expectedScore: 1,
   },
   {
     id: "fullstack-intern-2",
@@ -319,8 +321,8 @@ export const sampleQuestions: question[] = [
       "Representational Server Transfer",
       "Reserved State Transport",
     ],
-    answer: "Representational State Transfer",
-    score: 1,
+    expectedAnswer: "Representational State Transfer",
+    expectedScore: 1,
   },
   {
     id: "fullstack-intern-3",
@@ -328,8 +330,8 @@ export const sampleQuestions: question[] = [
     level: "intern",
     position: "fullstack",
     question: "Describe the role of an API in a web application.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // fullstack - fresher
@@ -340,8 +342,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question: "Which database would you choose for relational data?",
     options: ["Postgres", "MongoDB", "Redis", "Elasticsearch"],
-    answer: "Postgres",
-    score: 1,
+    expectedAnswer: "Postgres",
+    expectedScore: 1,
   },
   {
     id: "fullstack-fresher-2",
@@ -350,8 +352,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question: "Which HTTP status indicates 'Not Found'?",
     options: ["404", "200", "500", "403"],
-    answer: "404",
-    score: 1,
+    expectedAnswer: "404",
+    expectedScore: 1,
   },
   {
     id: "fullstack-fresher-3",
@@ -359,8 +361,8 @@ export const sampleQuestions: question[] = [
     level: "fresher",
     position: "fullstack",
     question: "Explain how the browser requests a webpage (high level).",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // fullstack - junior
@@ -376,8 +378,8 @@ export const sampleQuestions: question[] = [
       "Client-only routing service",
       "Cache origin response system",
     ],
-    answer: "Cross-origin resource sharing",
-    score: 2,
+    expectedAnswer: "Cross-origin resource sharing",
+    expectedScore: 2,
   },
   {
     id: "fullstack-junior-2",
@@ -386,8 +388,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question: "Which tool helps automate builds and tests?",
     options: ["CI tools (e.g., GitHub Actions)", "Dockerfile", "Nginx", "Sass"],
-    answer: "CI tools (e.g., GitHub Actions)",
-    score: 2,
+    expectedAnswer: "CI tools (e.g., GitHub Actions)",
+    expectedScore: 2,
   },
   {
     id: "fullstack-junior-3",
@@ -396,8 +398,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question:
       "Describe how you would debug a failing API call from the frontend.",
-    answer: "",
-    score: 2,
+    expectedAnswer: "",
+    expectedScore: 2,
   },
 
   // fullstack - senior
@@ -413,8 +415,8 @@ export const sampleQuestions: question[] = [
       "Monolithic-only",
       "Inline scripts",
     ],
-    answer: "Load balancing",
-    score: 3,
+    expectedAnswer: "Load balancing",
+    expectedScore: 3,
   },
   {
     id: "fullstack-senior-2",
@@ -428,8 +430,8 @@ export const sampleQuestions: question[] = [
       "Temporary inconsistency is impossible",
       "Consistency enforced by DB only",
     ],
-    answer: "Data will become consistent over time",
-    score: 3,
+    expectedAnswer: "Data will become consistent over time",
+    expectedScore: 3,
   },
   {
     id: "fullstack-senior-3",
@@ -438,8 +440,8 @@ export const sampleQuestions: question[] = [
     position: "fullstack",
     question:
       "Describe a migration strategy for a critical production database.",
-    answer: "",
-    score: 3,
+    expectedAnswer: "",
+    expectedScore: 3,
   },
 
   // devops - intern
@@ -450,8 +452,8 @@ export const sampleQuestions: question[] = [
     position: "devops",
     question: "Which tool is commonly used for container builds?",
     options: ["Docker", "Kubernetes", "Ansible", "Terraform"],
-    answer: "Docker",
-    score: 1,
+    expectedAnswer: "Docker",
+    expectedScore: 1,
   },
   {
     id: "devops-intern-2",
@@ -465,8 +467,8 @@ export const sampleQuestions: question[] = [
       "Container Integration",
       "Continuous Infrastructure",
     ],
-    answer: "Continuous Integration",
-    score: 1,
+    expectedAnswer: "Continuous Integration",
+    expectedScore: 1,
   },
   {
     id: "devops-intern-3",
@@ -474,8 +476,8 @@ export const sampleQuestions: question[] = [
     level: "intern",
     position: "devops",
     question: "Explain what a Docker image is.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // devops - fresher
@@ -486,8 +488,8 @@ export const sampleQuestions: question[] = [
     position: "devops",
     question: "Which system is used for orchestration of containers?",
     options: ["Kubernetes", "Docker Compose", "Git", "Vim"],
-    answer: "Kubernetes",
-    score: 1,
+    expectedAnswer: "Kubernetes",
+    expectedScore: 1,
   },
   {
     id: "devops-fresher-2",
@@ -501,8 +503,8 @@ export const sampleQuestions: question[] = [
       "Dockerfile",
       "README.md",
     ],
-    answer: ".github/workflows/*.yml",
-    score: 1,
+    expectedAnswer: ".github/workflows/*.yml",
+    expectedScore: 1,
   },
   {
     id: "devops-fresher-3",
@@ -510,8 +512,8 @@ export const sampleQuestions: question[] = [
     level: "fresher",
     position: "devops",
     question: "Describe what infrastructure as code means.",
-    answer: "",
-    score: 1,
+    expectedAnswer: "",
+    expectedScore: 1,
   },
 
   // devops - junior
@@ -522,8 +524,8 @@ export const sampleQuestions: question[] = [
     position: "devops",
     question: "Which monitoring tool is commonly used?",
     options: ["Prometheus", "Postgres", "Redis", "Sass"],
-    answer: "Prometheus",
-    score: 2,
+    expectedAnswer: "Prometheus",
+    expectedScore: 2,
   },
   {
     id: "devops-junior-2",
@@ -537,8 +539,8 @@ export const sampleQuestions: question[] = [
       "Containers are not allowed",
       "Infrastructure cannot be versioned",
     ],
-    answer: "Servers are replaced rather than modified",
-    score: 2,
+    expectedAnswer: "Servers are replaced rather than modified",
+    expectedScore: 2,
   },
   {
     id: "devops-junior-3",
@@ -546,8 +548,8 @@ export const sampleQuestions: question[] = [
     level: "junior",
     position: "devops",
     question: "Explain rollback strategies for deployments.",
-    answer: "",
-    score: 2,
+    expectedAnswer: "",
+    expectedScore: 2,
   },
 
   // devops - senior
@@ -558,8 +560,8 @@ export const sampleQuestions: question[] = [
     position: "devops",
     question: "Which tool is used to provision cloud resources declaratively?",
     options: ["Terraform", "Gulp", "Webpack", "Jest"],
-    answer: "Terraform",
-    score: 3,
+    expectedAnswer: "Terraform",
+    expectedScore: 3,
   },
   {
     id: "devops-senior-2",
@@ -573,8 +575,8 @@ export const sampleQuestions: question[] = [
       "Deploying only to staging",
       "Using only blue-green",
     ],
-    answer: "Deploying to a small subset of users first",
-    score: 3,
+    expectedAnswer: "Deploying to a small subset of users first",
+    expectedScore: 3,
   },
   {
     id: "devops-senior-3",
@@ -582,7 +584,7 @@ export const sampleQuestions: question[] = [
     level: "senior",
     position: "devops",
     question: "Describe how you would secure CI/CD pipelines.",
-    answer: "",
-    score: 3,
+    expectedAnswer: "",
+    expectedScore: 3,
   },
 ];
