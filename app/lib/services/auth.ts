@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { connectDB } from "./db";
-import { User } from "./models/user";
+import { connectDB } from "../db/db";
+import { User } from "../models/user";
 
 export async function registerUser({
   email,

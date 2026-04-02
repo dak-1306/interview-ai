@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
+  const params = useParams();
 
   return (
     <header className="w-full h-16 flex justify-between items-center px-16 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 z-10">
@@ -19,7 +21,8 @@ export default function Header() {
         pathname === "/interview/start" ||
         pathname === "/interview/result" ||
         pathname === "/history" ||
-        pathname === "/interview/practice" ? (
+        pathname === `/history/${params.id}` ||
+        pathname === `/interview/practice/${params.id}` ? (
         <div className="flex items-center space-x-4">
           <Link
             href="/dashboard"

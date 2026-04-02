@@ -6,6 +6,7 @@ import {
   ItemSeparator,
 } from "@/components/ui/item";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 const mockHistory = [
   { id: "s1", title: "Session — Arrays", desc: "2026-03-20 — Score: 78%" },
   { id: "s2", title: "Session — GraphQL", desc: "2026-03-10 — Score: 85%" },
@@ -22,13 +23,15 @@ export default function HistoryPage() {
       <Card>
         <ItemGroup>
           {mockHistory.map((h, idx) => (
-            <div key={h.id}>
-              <Item className="p-4">
-                <ItemTitle>{h.title}</ItemTitle>
-                <ItemDescription>{h.desc}</ItemDescription>
-              </Item>
-              {idx < mockHistory.length - 1 && <ItemSeparator />}
-            </div>
+            <Link href={`/history/${h.id}`} key={h.id}>
+              <div>
+                <Item className="p-4">
+                  <ItemTitle>{h.title}</ItemTitle>
+                  <ItemDescription>{h.desc}</ItemDescription>
+                </Item>
+                {idx < mockHistory.length - 1 && <ItemSeparator />}
+              </div>
+            </Link>
           ))}
         </ItemGroup>
       </Card>

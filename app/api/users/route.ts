@@ -1,4 +1,4 @@
-import { verifySession } from "@/app/lib/dal";
+import { verifySession } from "@/app/lib/repositories/dal";
 import { NextResponse } from "next/server";
 
 export async function GET() {

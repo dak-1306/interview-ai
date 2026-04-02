@@ -46,10 +46,11 @@ Fields:
 - \_id
 - interviewId
 - type
+- level
+- position
 - options
 - question
 - answer
-- feedback
 - score
 
 ---

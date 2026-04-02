@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { verifySession } from "@/app/lib/dal";
-import { redirect } from "next/navigation";
+import { getCurrentUserAction, checkAuth } from "@/app/actions/auth";
+
 import { Button } from "@/components/ui/button";
 export default async function DashboardPage() {
-  const user = await verifySession();
-  if (!user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
+  const userId = String(session.userId);
+  const user = await getCurrentUserAction(userId);
 
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">

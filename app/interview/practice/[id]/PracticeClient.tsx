@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -11,35 +11,52 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogOverlay,
-  DialogPortal,
 } from "@/components/ui/dialog";
-import { sampleQuestions, questionResult } from "@/app/lib/data/question";
-type result = questionResult;
-export default function PracticePage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const position = searchParams.get("position") || "";
-  const level = searchParams.get("level") || "";
 
+type Question = {
+  id: string;
+  type: "mcq" | "text";
+  question: string;
+  options?: string[];
+  answer?: string;
+  score?: number;
+};
+
+type InterviewProp = {
+  id: string;
+  position?: string;
+  level?: string;
+  questions: Question[];
+};
+
+type Props = {
+  interview: InterviewProp;
+};
+
+type Result = {
+  questionId: string;
+  answer: string;
+  score: number;
+};
+
+export default function PracticeClient({ interview }: Props) {
+  const router = useRouter();
   const [index, setIndex] = useState(0);
   const [mcqAnswers, setMcqAnswers] = useState<Record<string, string>>({});
   const [textAnswers, setTextAnswers] = useState<Record<string, string>>({});
   const [openSubmit, setOpenSubmit] = useState(false);
-  const [formResult, setFormResult] = useState<result[] | null>(null);
-  const filterQuestion = sampleQuestions.filter(
-    (q) => q.position === position && q.level === level,
-  );
-  const current = filterQuestion[index];
+  const [formResult, setFormResult] = useState<Result[] | null>(null);
+
+  const questions = interview.questions;
+  const current = questions[index];
 
   function handleNext() {
     if (!current) return;
-    // basic validation: require answer for current question
     if (current.type === "mcq" && !mcqAnswers[current.id]) return;
     if (current.type === "text" && !textAnswers[current.id]) return;
 
-    if (index + 1 >= filterQuestion.length) {
-      const results: result[] = filterQuestion.map((q) => {
+    if (index + 1 >= questions.length) {
+      const results: Result[] = questions.map((q) => {
         if (q.type === "mcq") {
           const userAnswer = mcqAnswers[q.id];
           const correct = userAnswer === q.answer;
@@ -57,7 +74,6 @@ export default function PracticePage() {
         }
       });
       setFormResult(results);
-
       setOpenSubmit(true);
     } else {
       setIndex((s) => s + 1);
@@ -66,8 +82,7 @@ export default function PracticePage() {
 
   function handleSubmit() {
     setOpenSubmit(false);
-    // Here you would send answers to backend. For now navigate to result page.
-    router.push("/interview/result");
+    router.push(`/interview/result`);
   }
 
   return (
@@ -76,7 +91,7 @@ export default function PracticePage() {
         Your Interview Practice Session
       </h1>
       <p className="text-sm text-gray-600 mb-4">
-        {position} — {level}
+        {interview.position} — {interview.level}
       </p>
 
       <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -132,7 +147,7 @@ export default function PracticePage() {
           </DialogDescription>
 
           <div className="mt-4 space-y-2">
-            {filterQuestion.map((q) => (
+            {questions.map((q) => (
               <div key={q.id} className="text-sm">
                 <div className="font-medium">{q.question}</div>
                 <div className="text-muted-foreground">

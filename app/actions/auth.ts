@@ -1,12 +1,16 @@
 "use server";
 
-import { registerUser, loginUser, getCurrentUser } from "@/app/lib/auth";
+import {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+} from "@/app/lib/services/auth";
 import {
   FormState,
   SignupFormSchema,
   LoginFormSchema,
-} from "@/app/lib/definitions";
-import { createSession, getSession } from "@/app/lib/session";
+} from "@/app/lib/types/definitions";
+import { createSession, getSession } from "@/app/lib/services/session";
 import { redirect } from "next/navigation";
 
 export async function registerAction(state: FormState, formData: FormData) {

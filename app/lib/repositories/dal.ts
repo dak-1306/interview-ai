@@ -1,6 +1,6 @@
-import { getSession } from "./session";
-import { connectDB } from "./db";
-import { User } from "./models/user";
+import { getSession } from "../services/session";
+import { connectDB } from "../db/db";
+import { User } from "../models/user";
 
 export async function verifySession() {
   const session = await getSession();

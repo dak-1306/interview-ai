@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectTrigger,
@@ -11,44 +9,34 @@ import {
   SelectItem,
   SelectLabel,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-const positions = [
-  { value: "backend", label: "Backend" },
-  { value: "frontend", label: "Frontend" },
-  { value: "fullstack", label: "Fullstack" },
-  { value: "devops", label: "DevOps" },
-];
 
-const levels = [
-  { value: "intern", label: "Intern" },
-  { value: "fresher", label: "Fresher" },
-  { value: "junior", label: "Junior" },
-  { value: "senior", label: "Senior" },
-];
+import { useActionState } from "react";
+import { useState, useEffect } from "react";
+import { start } from "@/app/actions/interview";
+import { Positions, Levels } from "@/app/lib/types/interview";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function StartPage() {
-  const router = useRouter();
+  const [state, action, pending] = useActionState(start, undefined);
   const [position, setPosition] = useState("");
   const [level, setLevel] = useState("");
+  const router = useRouter();
 
-  function begin() {
-    if (!position || !level) return;
-    router.push(
-      `/interview/practice?position=${encodeURIComponent(
-        position,
-      )}&level=${encodeURIComponent(level)}`,
-    );
-  }
+  useEffect(() => {
+    if (state?.redirect) {
+      router.push(state.redirect);
+    }
+  }, [state, router]);
 
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center text-center">
       <h1 className="text-4xl font-bold mb-4">Start Your Interview Session</h1>
-      <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-        Choose a topic and difficulty level to begin your personalized interview
-        practice session.
-      </p>
 
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-4">
+      <form
+        action={action}
+        className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-4"
+      >
         <div>
           <label className="block text-sm text-left mb-2">Position</label>
           <Select value={position} onValueChange={setPosition}>
@@ -58,14 +46,15 @@ export default function StartPage() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Positions</SelectLabel>
-                {positions.map((pos) => (
-                  <SelectItem key={pos.value} value={pos.value}>
-                    {pos.label}
+                {Positions.map((pos) => (
+                  <SelectItem key={pos} value={pos}>
+                    {pos}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
+          <input type="hidden" name="position" value={position} />
         </div>
 
         <div>
@@ -77,22 +66,27 @@ export default function StartPage() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Levels</SelectLabel>
-                {levels.map((lvl) => (
-                  <SelectItem key={lvl.value} value={lvl.value}>
-                    {lvl.label}
+                {Levels.map((lvl) => (
+                  <SelectItem key={lvl} value={lvl}>
+                    {lvl}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
+          <input type="hidden" name="level" value={level} />
         </div>
 
+        {state?.error && (
+          <p className="text-left text-red-500">{state.error}</p>
+        )}
+
         <div className="flex justify-end">
-          <Button onClick={begin} disabled={!position || !level}>
+          <Button type="submit" disabled={!position || !level || pending}>
             Begin Interview
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
