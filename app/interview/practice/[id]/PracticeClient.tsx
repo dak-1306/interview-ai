@@ -12,10 +12,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import type { InterviewClient } from "@/app/lib/types/interview";
+import type { InterviewClient, QuestionClient } from "@/app/lib/types/interview";
 
 type Props = {
   interview: InterviewClient;
+  questions: QuestionClient[];
 };
 
 type Result = {
@@ -24,23 +25,29 @@ type Result = {
   score: number;
 };
 
-export default function PracticeClient({ interview }: Props) {
+export default function PracticeClient({ interview, questions }: Props) {
   const router = useRouter();
   const [index, setIndex] = useState(0);
   const [mcqAnswers, setMcqAnswers] = useState<Record<string, string>>({});
   const [textAnswers, setTextAnswers] = useState<Record<string, string>>({});
   const [savingMap, setSavingMap] = useState<Record<string, boolean>>({});
-  const debounceTimers = useRef<Record<string, number>>({});
+
   const [openSubmit, setOpenSubmit] = useState(false);
   const [formResult, setFormResult] = useState<Result[] | null>(null);
-
-  const questions = interview.questions;
+  
   const current = questions[index];
 
-  function handleNext() {
+  async function handleNext() {
     if (!current) return;
     if (current.type === "mcq" && !mcqAnswers[current.id]) return;
     if (current.type === "text" && !textAnswers[current.id]) return;
+
+    // save current answer when Next is clicked
+    const answer =
+      current.type === "mcq"
+        ? mcqAnswers[current.id] || ""
+        : textAnswers[current.id] || "";
+    await saveAnswer(current.id, answer);
 
     if (index + 1 >= questions.length) {
       const results: Result[] = questions.map((q) => {
@@ -125,8 +132,6 @@ export default function PracticeClient({ interview }: Props) {
                 value={mcqAnswers[current.id] || ""}
                 onValueChange={(v) => {
                   setMcqAnswers((s) => ({ ...s, [current.id]: v }));
-                  // optimistic save
-                  saveAnswer(current.id, v);
                 }}
               >
                 <div className="grid gap-2">
@@ -146,18 +151,6 @@ export default function PracticeClient({ interview }: Props) {
                 onChange={(e) => {
                   const val = e.target.value;
                   setTextAnswers((s) => ({ ...s, [current.id]: val }));
-                  // debounce save
-                  const t = debounceTimers.current[current.id];
-                  if (t) clearTimeout(t);
-
-                  debounceTimers.current[current.id] = window.setTimeout(() => {
-                    saveAnswer(current.id, val);
-                  }, 600);
-                }}
-                onBlur={() => {
-                  const val = textAnswers[current.id] || "";
-                  // ensure final save on blur
-                  saveAnswer(current.id, val);
                 }}
                 placeholder="Type your answer here..."
               />
@@ -167,7 +160,9 @@ export default function PracticeClient({ interview }: Props) {
               {savingMap[current.id] && (
                 <div className="text-sm text-gray-500">Saving...</div>
               )}
-              <Button onClick={handleNext}>Next</Button>
+              <Button onClick={handleNext} disabled={!!savingMap[current.id]}>
+                Next
+              </Button>
             </div>
           </div>
         ) : (

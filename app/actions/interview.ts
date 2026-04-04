@@ -9,24 +9,28 @@ import {
   getInterviewById,
   getInterviewDetail,
 } from "@/app/lib/services/interview";
+
 import {
   InterviewFormState,
   InterviewFormSchema,
   AnswerFormSchema,
   FinishFormSchema,
+  InterviewClientSchema,
+  QuestionClientSchema,
 } from "@/app/lib/types/interview";
-import { InterviewSchema, QuestionSchema } from "@/app/lib/types/interview";
 
+/* ================================
+   Start Interview
+================================ */
 export async function start(formState: InterviewFormState, formData: FormData) {
   const user = await verifySession();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
+  if (!user) return { error: "Unauthorized" };
 
   const validateFields = InterviewFormSchema.safeParse({
     position: formData.get("position"),
     level: formData.get("level"),
   });
+
   if (!validateFields.success) {
     return { error: "Invalid form data" };
   }
@@ -36,64 +40,49 @@ export async function start(formState: InterviewFormState, formData: FormData) {
     level: validateFields.data.level,
     userId: user._id.toString(),
   });
+
   return {
     interviewId: resp.interviewId,
     redirect: `/interview/practice/${resp.interviewId}`,
   };
 }
 
+/* ================================
+   Get Interview Detail
+================================ */
 export async function getInterviewDetailAction(interviewId: string) {
   const data = await getInterviewDetail(interviewId);
   if (!data || !data.interview) return { error: "Not found" };
 
-  const interview = data.interview;
-  const questions = data.questions || [];
-
-  const vi = InterviewSchema.safeParse(interview);
+  const vi = InterviewClientSchema.safeParse(data.interview);
   if (!vi.success) {
-    console.error("Invalid interview from DB", vi.error);
+    console.error("Invalid interview", vi.error);
     return { error: "Invalid data" };
   }
 
-  const qDtos = [] as any[];
-  for (const q of questions) {
-    const vq = QuestionSchema.safeParse(q);
-    if (!vq.success) {
-      console.warn("Skipping invalid question", q._id?.toString());
-      continue;
-    }
-    qDtos.push({
-      id: q._id?.toString(),
-      type: q.type,
-      question: q.question,
-      options: q.options || [],
-      answer:
-        q.expectedAnswer !== undefined ? String(q.expectedAnswer) : undefined,
-      score: q.expectedScore,
-    });
-  }
+  const questions =
+    (data.questions || [])
+      .map((q: any) => QuestionClientSchema.safeParse(q))
+      .filter((r: any) => r.success)
+      .map((r: any) => r.data) || [];
 
   return {
     interview: {
-      id: interview._id?.toString(),
-      position: interview.position,
-      level: interview.level,
-      questions: qDtos,
+      ...vi.data,
+      questions,
     },
   };
 }
 
+/* ================================
+   Answer Question
+================================ */
 export async function answer(request: Request) {
   const user = await verifySession();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
-  let payload: string;
-  try {
-    payload = await request.json();
-  } catch (err) {
-    return { error: "Invalid JSON payload" };
-  }
+  if (!user) return { error: "Unauthorized" };
+
+  const payload = await request.json().catch(() => null);
+  if (!payload) return { error: "Invalid JSON payload" };
 
   const validateFields = AnswerFormSchema.safeParse(payload);
   if (!validateFields.success) return { error: "Invalid form data" };
@@ -102,8 +91,10 @@ export async function answer(request: Request) {
     const interviewData = await getInterviewById(
       validateFields.data.interviewId,
     );
+
     if (!interviewData || !interviewData.interview)
       return { error: "Not found" };
+
     if (String(interviewData.interview.userId) !== String(user._id))
       return { error: "Forbidden" };
 
@@ -112,23 +103,24 @@ export async function answer(request: Request) {
       questionId: validateFields.data.questionId,
       answer: validateFields.data.answer,
     });
+
     return { result };
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     return { error: "An error occurred" };
   }
 }
 
+/* ================================
+   Finish Interview
+================================ */
 export async function finish(request: Request) {
   const user = await verifySession();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
+  if (!user) return { error: "Unauthorized" };
 
   const payload = await request.json().catch(() => null);
-  if (!payload) {
-    return { error: "Invalid JSON payload" };
-  }
+  if (!payload) return { error: "Invalid JSON payload" };
+
   const validateFields = FinishFormSchema.safeParse(payload);
   if (!validateFields.success) return { error: "Invalid form data" };
 
@@ -136,28 +128,35 @@ export async function finish(request: Request) {
     const interviewData = await getInterviewById(
       validateFields.data.interviewId,
     );
+
     if (!interviewData || !interviewData.interview)
       return { error: "Not found" };
+
     if (String(interviewData.interview.userId) !== String(user._id))
       return { error: "Forbidden" };
 
     const result = await finishInterview(validateFields.data.interviewId);
     return { result };
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     return { error: "An error occurred" };
   }
 }
 
+/* ================================
+   History
+================================ */
 export async function history() {
   const user = await verifySession();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
+  if (!user) return { error: "Unauthorized" };
+
   const result = await getHistory(user._id.toString());
   return { result };
 }
 
+/* ================================
+   Latest Interview
+================================ */
 export async function getLatestInterview() {
   const user = await verifySession();
   if (!user) return { error: "Unauthorized" };
@@ -170,51 +169,18 @@ export async function getLatestInterview() {
   return { latest, detail };
 }
 
+/* ================================
+   Result By Id
+================================ */
 export async function getResultById(interviewId: string) {
   const user = await verifySession();
   if (!user) return { error: "Unauthorized" };
 
   const detail = await getInterviewById(interviewId);
   if (!detail || !detail.interview) return { error: "Not found" };
+
   if (String(detail.interview.userId) !== String(user._id))
     return { error: "Forbidden" };
 
   return { latest: detail.interview, detail };
-}
-
-export async function getById(_request: Request, params: { id: string }) {
-  const user = await verifySession();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
-
-  const { id } = params;
-  const data = await getInterviewById(id);
-  if (!data || !data.interview) return { error: "Not found" };
-  if (String(data.interview.userId) !== String(user._id))
-    return { error: "Forbidden" };
-
-  const qDtos = [] as any[];
-  for (const q of data.questions || []) {
-    const vq = QuestionSchema.safeParse(q);
-    if (!vq.success) continue;
-    qDtos.push({
-      id: q._id?.toString(),
-      type: q.type,
-      question: q.question,
-      options: q.options || [],
-      answer:
-        q.expectedAnswer !== undefined ? String(q.expectedAnswer) : undefined,
-      score: q.expectedScore,
-    });
-  }
-
-  return {
-    interview: {
-      id: data.interview._id?.toString(),
-      position: data.interview.position,
-      level: data.interview.level,
-      questions: qDtos,
-    },
-  };
 }

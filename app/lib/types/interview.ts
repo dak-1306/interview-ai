@@ -1,19 +1,26 @@
 import * as z from "zod";
 
+/* ================================
+   Constants
+================================ */
 export const Positions = [
   "backend",
   "frontend",
   "fullstack",
   "devops",
 ] as const;
+
 export const Levels = ["intern", "fresher", "junior", "senior"] as const;
 
-// ObjectId: accept either a 24-hex string or a mongoose/ObjectId-like object (convert to string)
+/* ================================
+   Helpers
+================================ */
+
+// ObjectId: accept ObjectId or string
 export const objectIdSchema = z.preprocess(
   (val) => {
     if (val && typeof val === "object") {
       try {
-        // mongoose ObjectId provides toHexString(), fallback to toString()
         if (typeof (val as any).toHexString === "function")
           return (val as any).toHexString();
         if (typeof (val as any).toString === "function")
@@ -34,6 +41,10 @@ export const dateSchema = z.preprocess((val) => {
   }
   return val;
 }, z.date());
+
+/* ================================
+   DB Schemas (MongoDB documents)
+================================ */
 
 export const QuestionSchema = z.object({
   _id: objectIdSchema.optional(),
@@ -72,28 +83,29 @@ export const InterviewSchema = z.object({
   updatedAt: dateSchema.optional(),
 });
 
-// Runtime schemas above. Export TypeScript types for compile-time only use in client.
-export type Question = z.infer<typeof QuestionSchema>;
-export type Interview = z.infer<typeof InterviewSchema>;
+/* ================================
+   Client DTO Schemas (transform)
+================================ */
 
-// Client-friendly DTOs (avoid Date in client payloads; server should serialize dates to strings)
-export type QuestionClient = {
-  id: string;
-  type: Question["type"];
-  question: string;
-  options?: string[];
-  answer?: string;
-  score?: number;
-};
+export const QuestionClientSchema = QuestionSchema.transform((q) => ({
+  id: q._id!,
+  type: q.type,
+  question: q.question,
+  options: q.options ?? [],
+  answer: q.expectedAnswer !== undefined ? String(q.expectedAnswer) : undefined,
+  score: q.expectedScore,
+}));
 
-export type InterviewClient = {
-  id: string;
-  position?: Interview["position"];
-  level?: Interview["level"];
-  questions: QuestionClient[];
-};
+export const InterviewClientSchema = InterviewSchema.transform((i) => ({
+  id: i._id!,
+  position: i.position,
+  level: i.level,
+}));
 
-// Forms / API inputs
+/* ================================
+   Forms / API Inputs
+================================ */
+
 export const InterviewFormSchema = z.object({
   position: z.enum(Positions),
   level: z.enum(Levels),
@@ -108,6 +120,16 @@ export const AnswerFormSchema = z.object({
 export const FinishFormSchema = z.object({
   interviewId: z.string().min(1),
 });
+
+/* ================================
+   Types
+================================ */
+
+export type Question = z.infer<typeof QuestionSchema>;
+export type Interview = z.infer<typeof InterviewSchema>;
+
+export type QuestionClient = z.infer<typeof QuestionClientSchema>;
+export type InterviewClient = z.infer<typeof InterviewClientSchema>;
 
 export type InterviewFormState =
   | {

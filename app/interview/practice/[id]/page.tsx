@@ -1,26 +1,21 @@
 import PracticeClient from "./PracticeClient";
 import { getInterviewDetailAction } from "@/app/actions/interview";
+import type {
+  InterviewClient,
+  QuestionClient,
+} from "@/app/lib/types/interview";
 
 export default async function PracticePage({ params }: any) {
   const resolved = await params;
   const { id } = resolved;
   const data = await getInterviewDetailAction(id);
-  const interview = data.interview;
-  const questions = data.interview?.questions || [];
 
-  const interviewProp = {
-    id: interview?.id?.toString() || id,
-    position: interview?.position || undefined,
-    level: interview?.level || undefined,
-    questions: questions.map((q: any) => ({
-      id: q.id?.toString(),
-      type: q.type,
-      question: q.question,
-      options: q.options || [],
-      answer: q.answer,
-      score: q.score,
-    })),
-  };
+  if (!data || !data.interview) {
+    return <div>Interview not found.</div>;
+  }
 
-  return <PracticeClient interview={interviewProp} />;
+  const interview = data.interview as InterviewClient;
+  const questions = (data.interview.questions || []) as QuestionClient[];
+
+  return <PracticeClient interview={interview} questions={questions} />;
 }
