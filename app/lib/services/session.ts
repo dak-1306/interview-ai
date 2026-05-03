@@ -48,3 +48,11 @@ export async function getSession() {
     return null;
   }
 }
+
+export async function deleteSession() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete({
+    name: "session",
+  });
+}

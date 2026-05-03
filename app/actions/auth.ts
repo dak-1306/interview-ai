@@ -10,7 +10,11 @@ import {
   SignupFormSchema,
   LoginFormSchema,
 } from "@/app/lib/types/definitions";
-import { createSession, getSession } from "@/app/lib/services/session";
+import {
+  createSession,
+  getSession,
+  deleteSession,
+} from "@/app/lib/services/session";
 import { redirect } from "next/navigation";
 
 export async function registerAction(state: FormState, formData: FormData) {
@@ -65,10 +69,20 @@ export async function checkAuth() {
   return session;
 }
 
-export async function getCurrentUserAction(userId: string) {
+export async function getCurrentUserAction() {
+  const session = await checkAuth();
+  const userId = String(session.userId);
   const user = await getCurrentUser(userId);
   if (!user) {
     redirect("/auth/login");
   }
   return user;
+}
+
+export async function logoutAction() {
+  const session = await getSession();
+  if (session) {
+    await deleteSession();
+  }
+  redirect("/auth/login");
 }

@@ -4,7 +4,7 @@ import { registerAction } from "@/app/actions/auth";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardAction } from "@/components/ui/card";
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(registerAction, undefined);
   return (
@@ -17,6 +17,15 @@ export default function RegisterPage() {
         your progress.
       </p>
       <Card className="w-full max-w-md p-6">
+        <CardAction className="mb-4 text-left">
+          Already have an account?{" "}
+          <a
+            href="/auth/login"
+            className="text-violet-600 dark:text-violet-400 font-medium hover:underline"
+          >
+            Log in here
+          </a>
+        </CardAction>
         <form
           className="w-full max-w-md space-y-4 flex flex-col "
           action={action}

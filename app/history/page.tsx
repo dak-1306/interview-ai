@@ -8,10 +8,10 @@ import {
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { history as getHistoryAction } from "@/app/actions/interview";
+import { history } from "@/app/actions/interview";
 
 export default async function HistoryPage() {
-  const res = await getHistoryAction();
+  const res = await history();
   if (!res || res.error) {
     if (res?.error === "Unauthorized") redirect("/auth/login");
     return (
